@@ -2283,7 +2283,7 @@ function drawCrown(cx,y,s){x.fillStyle='#ffcf28';x.beginPath();x.moveTo(cx-20*s,
 function drawPartner(px,py,facing,X=x,pose='front',stride=0){const f=facing>=0?1:-1,t=state==='ending'?endT:Math.floor(performance.now()/16.7);
   const hair='#7a4330',hairLight='#a0603f',skin='#ffe4cc',gown='#ff9fcf',gownLight='#ffd6ec',gownShade='#ef77b4';
   const o=(cx,cy,rx,ry,col)=>ell(cx,cy,rx,ry,col,X);
-  X.save();X.translate(px+17,py+46);
+  X.save();X.translate(px+17,py+46);X.scale(1.22,1.22);   // 主人公の大きさにつり合うよう少し大きく
   if(pose==='walk'){   // ===== 歩くときは横向き（進む方へ顔を向け、髪とドレスが後ろへなびく）=====
     X.scale(f,1);const ph=stride*.19,sw=Math.sin(ph);
     const hg=X.createLinearGradient(0,-44,0,-10);hg.addColorStop(0,'#8a4c34');hg.addColorStop(1,'#5a2e1e');
@@ -2388,10 +2388,16 @@ const HERO_L=new Image();HERO_L.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEU
 function drawPlayerAt(px,py,facing,pose,stride=0,context=x){
   const X=context,f=facing>=0?1:-1;if(!HERO_IMG.complete||!HERO_IMG.naturalWidth)return;
   const walking=pose==='walk',jumping=pose==='jump';
-  const H=80,W=H*HERO_IMG.naturalWidth/HERO_IMG.naturalHeight;
+  const H=70,W=H*HERO_IMG.naturalWidth/HERO_IMG.naturalHeight;
   const sw=walking?Math.sin(stride*.19):0,bob=walking?Math.abs(sw)*2:0;
-  if(walking){const im=f>0?HERO_R:HERO_L;if(im.complete&&im.naturalWidth){const w2=H*im.naturalWidth/im.naturalHeight,lift=Math.abs(sw)*2.2;
-    X.save();X.translate(px+17,py+42-lift);X.rotate(sw*f*.06);X.drawImage(im,-w2/2,-H,w2,H);X.restore();return;}}
+  if(walking){const im=f>0?HERO_R:HERO_L;if(im.complete&&im.naturalWidth){   // 横向き：上半身はそのまま、ひざから下の足を左右交互にふる
+    const iw=im.naturalWidth,ih=im.naturalHeight,k=H/ih,w2=iw*k,cut=Math.round(ih*.7),lx=iw*(f>0?.545:.425),lift=Math.abs(sw)*1.5,a=sw*.38;
+    X.save();X.translate(px+17,py+42-lift);
+    const leg=(ang,dark)=>{X.save();X.translate(-w2/2+lx*k,-H+cut*k);X.rotate(ang);if(dark)X.filter='brightness(.75)';
+      X.drawImage(im,0,cut-6,iw,ih-cut+6,-lx*k,-6*k,w2,(ih-cut+6)*k);X.restore();};
+    leg(-a,true);leg(a,false);
+    X.drawImage(im,0,0,iw,cut,-w2/2,-H,w2,cut*k);   // 上半身（足のつけねを上からかぶせる）
+    X.restore();return;}}
   X.save();X.translate(px+17,py+42);
   X.scale(f,1);if(jumping)X.scale(.95,1.05);
   X.drawImage(HERO_IMG,-W/2,-H-bob,W,H);
