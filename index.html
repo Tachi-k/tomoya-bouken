@@ -2382,7 +2382,7 @@ const HERO_L=new Image();HERO_L.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEU
 function drawPlayerAt(px,py,facing,pose,stride=0,context=x){
   const X=context,f=facing>=0?1:-1;if(!HERO_IMG.complete||!HERO_IMG.naturalWidth)return;
   const walking=pose==='walk',jumping=pose==='jump';
-  const H=54,W=H*HERO_IMG.naturalWidth/HERO_IMG.naturalHeight;
+  const H=108,W=H*HERO_IMG.naturalWidth/HERO_IMG.naturalHeight;
   const sw=walking?Math.sin(stride*.19):0,bob=walking?Math.abs(sw)*2:0;
   if(walking){const im=f>0?HERO_R:HERO_L;if(im.complete&&im.naturalWidth){const w2=H*im.naturalWidth/im.naturalHeight,lift=Math.abs(sw)*2.2;
     X.save();X.translate(px+17,py+42-lift);X.rotate(sw*f*.06);X.drawImage(im,-w2/2,-H,w2,H);X.restore();return;}}
