@@ -229,11 +229,11 @@ const c=document.querySelector('canvas'),x=c.getContext('2d'),W=960,H=540,ground
 let world=4300,stage=1,AX=0,arenaOn=false,boss=null,rocks=[],waves=[],parts=[],shake=0,bannerText='',bannerSub='',bannerT=0,clearT=0,endT=0,stageStartScore=0;
 let keys={},player,coins=[],enemies=[],platforms=[],camera=0,score=0,state='play',goalTick=0,audioCtx,deathTick=0,lives=3,holes=[],digCooldown=0,digHold=false,padJump=false,bgmStep=0,curSong=null,digBuf=0,digBufT=0,failMark=null,items=[],popups=[],spots=[];
 const STARS=Array.from({length:90},(_,i)=>({x:(i*397)%W,y:(i*173)%380,s:1+(i%3),p:i}));
-const CREDITS=['モグラ大王 ドリモグを たおした！','','谷に 光が もどり','空の国に 平和が おとずれた','','','STAGE 1　そよかぜの丘','STAGE 2　大王の谷','','','HERO　よし太くん','','','THANK YOU FOR PLAYING!'];
-const CREDITS_PAIR=['モグラ大王 ドリモグを たおした！','','とらわれていた ソラ姫を 助けだし','ふたりは 空の国で 結ばれた','','','STAGE 1　そよかぜの丘','STAGE 2　大王の谷','','','HERO　よし太くん','PRINCESS　ソラ姫','','','おしあわせに！','','THANK YOU FOR PLAYING!'];
+const CREDITS=['モグラ大王 ドリモグを たおした！','','谷に 光が もどり','空の国に 平和が おとずれた','','','STAGE 1　そよかぜの丘','STAGE 2　大王の谷','','','HERO　tomoya','','','THANK YOU FOR PLAYING!'];
+const CREDITS_PAIR=['モグラ大王 ドリモグを たおした！','','とらわれていた ソラ姫を 助けだし','ふたりは 空の国で 結ばれた','','','STAGE 1　そよかぜの丘','STAGE 2　大王の谷','','','HERO　tomoya','PRINCESS　ソラ姫','','','おしあわせに！','','THANK YOU FOR PLAYING!'];
 let endingPair=false;   // true：お姫様と2人のエンディング（50%の確率）
 // レアエンディング（10%）：ドリモグが心を入れかえて友だちに
-const CREDITS_RARE=['モグラ大王 ドリモグを たおした！','','……と 思ったら','ドリモグは 心を入れかえ','みんなの 友だちになった！','','ソラ姫も いっしょに','空の国で 大パーティー！','','','★ RARE ENDING ★','','HERO　よし太くん','PRINCESS　ソラ姫','FRIEND　ドリモグ','','','これを見られたあなたは','とってもラッキー！','','THANK YOU FOR PLAYING!'];
+const CREDITS_RARE=['モグラ大王 ドリモグを たおした！','','……と 思ったら','ドリモグは 心を入れかえ','みんなの 友だちになった！','','ソラ姫も いっしょに','空の国で 大パーティー！','','','★ RARE ENDING ★','','HERO　tomoya','PRINCESS　ソラ姫','FRIEND　ドリモグ','','','これを見られたあなたは','とってもラッキー！','','THANK YOU FOR PLAYING!'];
 let endingRare=false;
 const CREDITS_PRINCESS=['モグラ大王 ドリモグを たおした！','','……と 思ったら','ドリモグは 心を入れかえ','みんなの 友だちになった！','','よし太くんも いっしょに','空の国で 大パーティー！','','','★ RARE ENDING ★','','— ソラ姫の大冒険 —','','HERO　ソラ姫','FRIEND　よし太くん','FRIEND　ドリモグ','','','3周目まで あそんでくれて','ほんとうに ありがとう！','','THANK YOU FOR PLAYING!'];
 function credits(){return princessRound&&endingRare?CREDITS_PRINCESS:endingRare?CREDITS_RARE:endingPair?CREDITS_PAIR:CREDITS}
@@ -2073,7 +2073,7 @@ function drawEndingCut(){const t=endCutT;
   drawParts();
   x.textAlign='center';
   const fade=(a,b)=>Math.max(0,Math.min(1,(t-a)/20,(b-t)/20));
-  const heroName=princessRound?'ソラ姫':'よし太くん',partnerName=princessRound?'よし太くん':'ソラ姫';
+  const heroName=princessRound?'ソラ姫':'tomoya',partnerName=princessRound?'よし太くん':'ソラ姫';
   if(t<150){x.globalAlpha=fade(0,150);opBubble('やったー！',heroX+17,ground-150-hop);x.globalAlpha=1;}
   if(t>=150&&t<260){x.globalAlpha=fade(150,260);opBubble(heroName+'！',partnerX+17,partnerY-75,'#ffe0ef');x.globalAlpha=1;}
   if(t>=200&&t<320){x.globalAlpha=fade(200,320);fancyText(partnerName+'を たすけだした！',W/2,ground-260,40,'gold');x.globalAlpha=1;}
