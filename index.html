@@ -619,10 +619,11 @@ function timp(t,vol,f0){bnote(f0,t,.7,'sine',vol,f0*.6)}
 function bell(m,t,vol){bnote(mf(m),t,1.6,'sine',vol);bnote(mf(m)*2.76,t,.8,'sine',vol*.3)}
 function holdLen(arr,i,max){let n=1;while(n<max&&!arr[i+n]&&(i+n)%8!==0)n++;return n}
 
-// フィールド曲：C-Am-F-G
-const MEL=[72,0,76,79,76,0,74,72, 69,0,72,76,74,72,69,0, 65,69,72,0,77,76,74,72, 71,0,74,0,79,77,74,71,
-           76,0,79,84,83,79,76,0, 81,0,79,76,72,0,76,0, 77,76,74,72,69,72,74,0, 74,0,71,74,72,0,0,0];
-const ROOT=[48,45,41,43,48,45,41,43];
+// フィールド曲（1面）：C-Em-F-G-C-Am-Dm-G　はずむスタッカートとキラキラの分散和音で軽やかに
+const MEL=[72,76,79,76,84,0,79,0, 76,79,83,79,76,0,71,0, 77,0,81,0,84,81,77,81, 79,0,0,74,79,0,83,0,
+           84,83,81,79,76,0,79,0, 81,0,76,0,72,76,81,0, 77,76,74,77,81,0,77,0, 79,0,74,0,71,74,79,0];
+const ROOT=[48,40,41,43,48,45,38,43];
+const F1_CH=[[60,64,67],[59,64,67],[60,65,69],[59,62,67],[60,64,67],[57,60,64],[57,62,65],[59,62,67]];
 // ボス曲：Dm-B♭-C-A（短調・勇壮）
 const BOSS_MEL=[62,0,0,65,69,0,67,65, 70,0,69,67,65,0,62,0, 64,0,67,72,70,0,69,67, 69,0,0,0,73,0,76,0,
                 74,0,0,72,69,0,72,74, 77,0,74,70,74,0,70,67, 72,0,76,79,77,76,74,72, 73,0,69,73,76,0,0,0];
@@ -634,7 +635,11 @@ const END_MEL=[72,0,0,0,74,0,76,0, 79,0,0,0,0,0,77,76, 76,0,0,0,74,0,72,0, 74,0,
 const END_CH=[[60,64,67],[59,62,67],[57,60,64],[57,60,65],[60,64,67],[57,60,65],[59,62,67],[60,64,67]];
 const END_ROOT=[48,47,45,41,48,41,43,36];
 const SONGS={
-  field:{len:64,dur:()=>60/(player&&player.hole?172:140)/2/(stage===1?stage1Rush():1)/hurryMul(),step(i,t,sd){const T=stage===2?2:0,m=MEL[i];if(m)bnote(mf(m+T),t,sd*.85,'square',.04);const root=ROOT[i>>3]+T;if(i%2===0)bnote(mf(root+(i%4===2?12:0)),t,sd*1.6,'triangle',.11);if(i%4===0)bnote(150,t,.12,'sine',.22,45);if(i%8===4)hat(t,.07,.1);if(i%2===1)hat(t,.03)}},
+  field:{len:64,dur:()=>60/(player&&player.hole?184:160)/2/(stage===1?stage1Rush():1)/hurryMul(),step(i,t,sd){const bar=i>>3,b=i%8,m=MEL[i],ch=F1_CH[bar];
+    if(m){bnote(mf(m),t,sd*.5,'square',.034);bnote(mf(m+12),t+sd*.5,sd*.3,'triangle',.012);}   // ポンポンはずむメロディ＋こだま
+    bnote(mf(ch[[0,1,2,1][b%4]]+24),t,sd*.4,'triangle',.016);                                   // キラキラの分散和音
+    if(b%2===0)bnote(mf(ROOT[bar]+(b%4===2?12:0)),t,sd*.9,'triangle',.1);                       // ブン・ブン　はねるベース
+    if(b===0||b===4)bnote(150,t,.1,'sine',.17,50);if(b===2||b===6)hat(t,.05,.08);if(b%2===1)hat(t,.018);}},
   boss:{len:64,dur:()=>60/(boss&&boss.hp===1?166:152)/2/bossRush(),step(i,t,sd){const bar=i>>3,b=i%8,m=BOSS_MEL[i];if(m)brass(m,t,sd*holdLen(BOSS_MEL,i,4)*.92,.045);if(b===0)pad(BOSS_CH[bar],t,sd*8,.022);bnote(mf(BOSS_ROOT[bar]+(b%2?12:0)),t,sd*.8,'sawtooth',.045);if(b===0)timp(t,.34,98);if(b===4)timp(t,.2,98);if(i%16>=14)timp(t,.13,130);if(b%2===1)hat(t,.025);if(b===4)hat(t,.06,.1)}},
   ending:{len:64,dur:()=>60/72/2,step(i,t,sd){const bar=i>>3,b=i%8,ch=END_CH[bar];if(b===0){pad(ch,t,sd*8,.028);bnote(mf(END_ROOT[bar]),t,sd*8,'triangle',.12);timp(t,bar%4===0?.28:.12,82);bell(ch[2]+12,t,.035)}bnote(mf(ch[[0,1,2,1,2,1,0,1][b]]+12),t,sd*1.5,'triangle',.045);const m=END_MEL[i];if(m){const L=holdLen(END_MEL,i,8);brass(m,t,sd*L*.95,.03);bnote(mf(m+12),t,sd*L*.9,'sine',.025)}}}
 };
@@ -650,19 +655,20 @@ SONGS.wedding={len:48,dur:()=>60/84/2,step(i,t,sd){const bar=Math.floor(i/6),b=i
   if(b===2||b===4)bnote(mf(ch[0]),t,sd*.9,'triangle',.05),bnote(mf(ch[1]),t,sd*.9,'triangle',.04);    // ズン・チャッ・チャッ
   bnote(mf(ch[[0,1,2,1,2,1][b]]+24),t,sd*1.2,'sine',.018);                                           // オルゴール風の分散和音
   const m=WED_MEL[i];if(m){const L=holdLen6(WED_MEL,i);bnote(mf(m),t,sd*L*.95,'sine',.07);bnote(mf(m+12),t,sd*L*.8,'triangle',.022);}}};
-// 2面道中の曲（オリジナル）：ホ短調、半音でにじり寄るベースと低い太鼓で「物騒な」感じ
-const F2_MEL=[64,0,0,0,0,0,65,64, 0,0,71,0,70,0,67,0, 65,0,0,69,0,0,72,71, 64,0,0,0,0,0,0,0,
-              69,0,0,72,0,71,69,0, 70,0,0,74,0,0,77,76, 75,0,0,71,0,0,66,0, 64,0,0,0,63,0,64,0];
-const F2_CH=[[59,64,67],[59,64,67],[60,65,69],[59,64,67],[57,60,64],[58,62,65],[59,63,66],[59,64,67]];
-const F2_ROOT=[40,40,41,40,45,46,47,40];
+// 2面道中の曲（オリジナル）：ホ短調。半音ずつはい上がるメロディ・三全音・心臓の鼓動のような太鼓で「こわい」感じ
+const F2_MEL=[76,0,0,0,77,0,0,0, 76,0,0,0,0,0,0,0, 71,0,72,0,71,0,70,0, 70,0,0,0,0,0,64,0,
+              79,0,0,78,0,0,77,0, 76,0,0,0,0,0,0,0, 75,0,74,0,73,0,72,0, 71,0,0,0,0,0,0,0];
+const F2_CH=[[52,55,59],[53,57,60],[52,55,59],[50,53,58],[52,55,59],[53,57,60],[51,54,57],[52,55,59]];
+const F2_ROOT=[40,41,40,46,40,41,39,40];
 function darkPad(ms,t,dur,vol){const f=audioCtx.createBiquadFilter(),g=audioCtx.createGain();f.type='lowpass';f.frequency.value=700;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.4);g.gain.setValueAtTime(vol,t+Math.max(.41,dur-.3));g.gain.exponentialRampToValueAtTime(.0001,t+dur+.3);f.connect(g);g.connect(bus());for(const m of ms)for(const d of[-10,10]){const o=audioCtx.createOscillator();o.type='sawtooth';o.frequency.value=mf(m-12);o.detune.value=d;o.connect(f);o.start(t);o.stop(t+dur+.35)}}
-SONGS.field2={len:64,dur:()=>60/(player&&player.hole?140:118)/2/stage2Rush(),step(i,t,sd){const bar=i>>3,b=i%8,r=F2_ROOT[bar];
-  if(b===0)darkPad(F2_CH[bar],t,sd*8,.03);
-  const os=[0,0,12,0,1,0,7,0][b];bnote(mf(r+os),t,sd*.8,'sawtooth',.035);bnote(mf(r+os),t,sd*.9,'triangle',.09);   // にじり寄るベース
-  if(b===0||b===3)timp(t,b===0?.32:.18,72);if(b===6)timp(t,.12,96);                                          // ドン…ドン　低い太鼓
-  if(b===4)hat(t,.05,.1);if(b%2===1)hat(t,.018);
-  const m=F2_MEL[i];if(m){const L=holdLen(F2_MEL,i,6);bnote(mf(m),t,sd*L*.9,'square',.028);bnote(mf(m)*1.006,t,sd*L*.9,'triangle',.03);}
-  if(i===28||i===60)bell(88,t,.02);}};                                                                       // 遠くで鳴る鐘
+SONGS.field2={len:64,dur:()=>60/(player&&player.hole?120:100)/2/stage2Rush(),step(i,t,sd){const bar=i>>3,b=i%8,r=F2_ROOT[bar];
+  if(b===0){darkPad(F2_CH[bar],t,sd*8,.034);bnote(mf(r-12),t,sd*8,'triangle',.07);}                         // 低くうなる和音と地鳴り
+  if(b===0||b===3||b===6)bnote(mf(r+(b===6?1:0)),t,sd*1.2,'sawtooth',.04);                                     // ズン…ズン…ズズッ（半音上がる）
+  if(b===0)timp(t,.36,60);if(b===1)timp(t,.22,60);                                                             // ドクン、ドクン　心臓の鼓動
+  if(b===4)hat(t,.03,.14);
+  const m=F2_MEL[i];if(m){const L=holdLen(F2_MEL,i,8);bnote(mf(m),t,sd*L*.95,'square',.022);bnote(mf(m)*1.012,t,sd*L*.95,'triangle',.03);}   // ゆらぐ不気味なメロディ
+  if(i%16===8)bell(r+42,t,.018);                                                                                // 遠くで鳴る三全音の鐘
+  if(i%32===20){bnote(mf(88),t,sd*6,'sine',.012);bnote(mf(89),t,sd*6,'sine',.012);}}};                         // キーン…とにごる高い音
 const toMajor=m=>{const pc=((m%12)+12)%12;return m+(pc===5||pc===10||pc===0?1:0)};
 const RARE_MEL=BOSS_MEL.map(m=>m?toMajor(m):0);
 const RARE_CH=[[62,66,69],[62,67,71],[61,64,69],[61,64,69],[62,66,69],[62,67,71],[61,64,69],[61,64,69]];
@@ -722,7 +728,7 @@ function mp3StartBuf(m,rate){mp3StopBuf(m);const c=m.cfg,src=audioCtx.createBuff
 function mp3Halt(key){const m=mp3[key];if(!m)return;if(m.src&&audioCtx)m.pos=mp3Wrap(m,m.pos+(audioCtx.currentTime-m.lastCtxT)*m.src.playbackRate.value);if(m.el&&!m.el.paused){try{m.el.pause()}catch(_){}}if(m.engine==='el'&&m.el)m.pos=m.el.currentTime;mp3StopBuf(m);}
 function mp3Restart(key){const m=mp3[key];if(!m)return;m.pos=0;try{if(m.el)m.el.currentTime=0}catch(_){}if(m.src&&audioCtx){mp3StopBuf(m);}}
 function mp3PlayEl(m){if(!m.el||m.elBad)return;try{m.el.currentTime=mp3Wrap(m,m.pos)}catch(_){}m.reqT=Date.now();m.elT0=m.el.currentTime;m.elOK=false;const pr=m.el.play();if(pr&&pr.catch)pr.catch(()=>{m.elBad=true});}
-const BASE_DUR={field:60/140/2,field2:60/118/2};
+const BASE_DUR={field:60/160/2,field2:60/100/2};
 function mp3LoopCheck(){const m=mp3Cur&&mp3[mp3Cur];if(!m||m.engine!=='el'||!m.el||m.el.paused)return;const c=m.cfg;if(c.loopEnd&&m.el.currentTime>=c.loopEnd){try{m.el.currentTime-= (c.loopEnd-c.loopStart)}catch(_){}}}
 function mp3Tick(){   // MP3の再生開始を確認してから通常BGMを止める。読み込み中は通常BGMを継続。
   const s=currentSong(),want=(!paused&&musicOn&&!document.hidden&&mode==='game'&&audioCtx)?mp3Key(s):null;
