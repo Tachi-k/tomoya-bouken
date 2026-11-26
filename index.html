@@ -1,9 +1,9 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8">
-<!-- よし太くんの大冒険（GitHub Pages で公開） -->
+<!-- tomoya-bouken（GitHub Pages で公開） -->
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="theme-color" content="#17283c">
-<title>よし太くんの大冒険</title>
+<title>大冒険</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;overflow:hidden;background:#17283c;color:#fff;font-family:system-ui;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;overscroll-behavior:none}
@@ -229,11 +229,11 @@ const c=document.querySelector('canvas'),x=c.getContext('2d'),W=960,H=540,ground
 let world=4300,stage=1,AX=0,arenaOn=false,boss=null,rocks=[],waves=[],parts=[],shake=0,bannerText='',bannerSub='',bannerT=0,clearT=0,endT=0,stageStartScore=0;
 let keys={},player,coins=[],enemies=[],platforms=[],camera=0,score=0,state='play',goalTick=0,audioCtx,deathTick=0,lives=3,holes=[],digCooldown=0,digHold=false,padJump=false,bgmStep=0,curSong=null,digBuf=0,digBufT=0,failMark=null,items=[],popups=[],spots=[];
 const STARS=Array.from({length:90},(_,i)=>({x:(i*397)%W,y:(i*173)%380,s:1+(i%3),p:i}));
-const CREDITS=['モグラ大王 ドリモグを たおした！','','谷に 光が もどり','空の国に 平和が おとずれた','','','— よし太くんの大冒険 —','','STAGE 1　そよかぜの丘','STAGE 2　大王の谷','','','HERO　よし太くん','','','THANK YOU FOR PLAYING!'];
-const CREDITS_PAIR=['モグラ大王 ドリモグを たおした！','','とらわれていた ソラ姫を 助けだし','ふたりは 空の国で 結ばれた','','','— よし太くんの大冒険 —','','STAGE 1　そよかぜの丘','STAGE 2　大王の谷','','','HERO　よし太くん','PRINCESS　ソラ姫','','','おしあわせに！','','THANK YOU FOR PLAYING!'];
+const CREDITS=['モグラ大王 ドリモグを たおした！','','谷に 光が もどり','空の国に 平和が おとずれた','','','STAGE 1　そよかぜの丘','STAGE 2　大王の谷','','','HERO　よし太くん','','','THANK YOU FOR PLAYING!'];
+const CREDITS_PAIR=['モグラ大王 ドリモグを たおした！','','とらわれていた ソラ姫を 助けだし','ふたりは 空の国で 結ばれた','','','STAGE 1　そよかぜの丘','STAGE 2　大王の谷','','','HERO　よし太くん','PRINCESS　ソラ姫','','','おしあわせに！','','THANK YOU FOR PLAYING!'];
 let endingPair=false;   // true：お姫様と2人のエンディング（50%の確率）
 // レアエンディング（10%）：ドリモグが心を入れかえて友だちに
-const CREDITS_RARE=['モグラ大王 ドリモグを たおした！','','……と 思ったら','ドリモグは 心を入れかえ','みんなの 友だちになった！','','ソラ姫も いっしょに','空の国で 大パーティー！','','','★ RARE ENDING ★','','— よし太くんの大冒険 —','','HERO　よし太くん','PRINCESS　ソラ姫','FRIEND　ドリモグ','','','これを見られたあなたは','とってもラッキー！','','THANK YOU FOR PLAYING!'];
+const CREDITS_RARE=['モグラ大王 ドリモグを たおした！','','……と 思ったら','ドリモグは 心を入れかえ','みんなの 友だちになった！','','ソラ姫も いっしょに','空の国で 大パーティー！','','','★ RARE ENDING ★','','HERO　よし太くん','PRINCESS　ソラ姫','FRIEND　ドリモグ','','','これを見られたあなたは','とってもラッキー！','','THANK YOU FOR PLAYING!'];
 let endingRare=false;
 const CREDITS_PRINCESS=['モグラ大王 ドリモグを たおした！','','……と 思ったら','ドリモグは 心を入れかえ','みんなの 友だちになった！','','よし太くんも いっしょに','空の国で 大パーティー！','','','★ RARE ENDING ★','','— ソラ姫の大冒険 —','','HERO　ソラ姫','FRIEND　よし太くん','FRIEND　ドリモグ','','','3周目まで あそんでくれて','ほんとうに ありがとう！','','THANK YOU FOR PLAYING!'];
 function credits(){return princessRound&&endingRare?CREDITS_PRINCESS:endingRare?CREDITS_RARE:endingPair?CREDITS_PAIR:CREDITS}
@@ -1852,7 +1852,7 @@ function drawOpening(){const o=opening,t=o.t;
   if(t<150){x.globalAlpha=fadeIn(10,150);fancyText('空の国は、へいわでした…',W/2,140,40,'white');x.globalAlpha=1;}
   if(t>=150&&t<240){x.globalAlpha=.5+.5*Math.abs(Math.sin(t*.25));fancyText('ゴゴゴゴ…',W/2+(realRandom()-.5)*6,150,56,'gold');x.globalAlpha=1;}
   if(t>=250&&t<330){x.globalAlpha=fadeIn(250,330);fancyText('モグラ大王 ドリモグ あらわる！',W/2,130,40,'red');x.globalAlpha=1;}
-  if(t>=560){x.globalAlpha=fadeIn(560,OP_LEN+30);fancyText('よし太くんの大冒険',W/2,150,64,'gold');fancyText('ソラ姫を たすけだせ！',W/2,205,30,'white');x.globalAlpha=1;}
+  if(t>=560){x.globalAlpha=fadeIn(560,OP_LEN+30);fancyText('ソラ姫を たすけだせ！',W/2,205,30,'white');x.globalAlpha=1;}
   x.textAlign='left';
   x.restore();
   if(t>OP_LEN-40){x.fillStyle=`rgba(0,0,0,${(t-(OP_LEN-40))/40})`;x.fillRect(0,0,W,H);}   // フェードアウト
@@ -1997,7 +1997,7 @@ function drawTitle(){
   x.save();x.translate(W/2,ly-30);x.rotate(t*.00015);for(let k=0;k<16;k++){x.rotate(Math.PI/8);x.fillStyle=k%2?'#fff4b012':'#ffd27a1c';x.beginPath();x.moveTo(0,0);x.lineTo(-40,-520);x.lineTo(40,-520);x.closePath();x.fill();}x.restore();
   const glow=x.createRadialGradient(W/2,ly-30,10,W/2,ly-30,300);glow.addColorStop(0,'#ffe9a055');glow.addColorStop(1,'#ffe9a000');x.fillStyle=glow;x.fillRect(0,0,W,H);
   // 立体的なロゴ：奥へ伸びる厚み → ふち → 金色のグラデーション → つや
-  const title='よし太くんの大冒険';x.font='900 84px system-ui';
+  const title='';x.font='900 84px system-ui';
   for(let d=10;d>0;d--){x.fillStyle=d>7?'#3a1a08':`rgb(${140-d*8},${62-d*4},${18})`;x.fillText(title,W/2+d*.6,ly+d);}
   x.lineWidth=14;x.strokeStyle='#1a2440';x.strokeText(title,W/2,ly);
   x.lineWidth=5;x.strokeStyle='#fff3c0';x.strokeText(title,W/2,ly);
